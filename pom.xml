@@ -11,7 +11,7 @@
     <dependencies>
         <dependency>
             <groupId>com.gary.thriftext</groupId>
-            <artifactId>register</artifactId>
+            <artifactId>thrift-register</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

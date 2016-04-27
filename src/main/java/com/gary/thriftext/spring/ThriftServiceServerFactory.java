@@ -50,6 +50,8 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
     private String ip;
     @Setter
     private int port = 9090;
+    @Setter
+    private long warmup = 10 * 60 * 10000;
     private final String INTERFACE_NAME = "Iface";
     private final String PROCESSOR = "$Processor";
 
@@ -82,7 +84,7 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
                     ThriftService service = AnnotationUtils.findAnnotation(serviceClass, ThriftService.class);
                     String serviceName = StringUtils.isEmpty(service.name()) ? thriftInterface.getEnclosingClass().getSimpleName() : service.name();
                     multiplexedProcessor.registerProcessor(serviceName, processor);
-                    if (serverRegister != null) serverRegister.register(thriftInterface.getName(), service.version(), ip + ":" + port + ":" + service.weight());
+                    if (serverRegister != null) serverRegister.register(thriftInterface.getName(), service.version(), ip + ":" + port + ":" + service.weight() + ":" + System.currentTimeMillis() + ":" + warmup);
                     log.info("thrift service [{}-{}] register", serviceName, serviceClass);
                 }
             }

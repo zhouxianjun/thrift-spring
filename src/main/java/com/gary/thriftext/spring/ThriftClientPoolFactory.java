@@ -1,6 +1,7 @@
 package com.gary.thriftext.spring;
 
 import com.gary.thriftext.register.ThriftServerProviderFactory;
+import com.gary.thriftext.register.dto.Invoker;
 import com.gary.thriftext.spring.annotation.ThriftReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool.BasePoolableObjectFactory;
@@ -13,7 +14,6 @@ import org.apache.thrift.transport.TTransport;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
-import java.net.InetSocketAddress;
 
 /**
  * @author zhouxianjun(Gary)
@@ -25,8 +25,6 @@ import java.net.InetSocketAddress;
 public class ThriftClientPoolFactory extends BasePoolableObjectFactory<TServiceClient> {
     private final TServiceClientFactory<TServiceClient> clientFactory;
     private ThriftServerProviderFactory providerFactory;
-    private ThriftReference reference;
-    private Class<?> referenceClass;
     private Class<TTransport> transportClass;
     private Class<TProtocol> protocolClass;
     private PoolOperationCallBack callback;
@@ -43,9 +41,7 @@ public class ThriftClientPoolFactory extends BasePoolableObjectFactory<TServiceC
                                       Class<TProtocol> protocolClass) throws Exception {
         this.providerFactory = providerFactory;
         this.clientFactory = clientFactory;
-        this.reference = reference;
         this.transportClass = transportClass;
-        this.referenceClass = referenceClass;
         this.protocolClass = protocolClass;
 
         this.service = referenceClass.getName();
@@ -63,9 +59,7 @@ public class ThriftClientPoolFactory extends BasePoolableObjectFactory<TServiceC
         this.providerFactory = providerFactory;
         this.clientFactory = clientFactory;
         this.callback = callback;
-        this.reference = reference;
         this.transportClass = transportClass;
-        this.referenceClass = referenceClass;
         this.protocolClass = protocolClass;
 
         this.service = referenceClass.getName();
@@ -75,8 +69,8 @@ public class ThriftClientPoolFactory extends BasePoolableObjectFactory<TServiceC
 
     @Override
     public TServiceClient makeObject() throws Exception {
-        InetSocketAddress address = providerFactory.selector(service, version);
-        TSocket tsocket = new TSocket(address.getHostName(), address.getPort());
+        Invoker invoker = providerFactory.selector(service, version);
+        TSocket tsocket = new TSocket(invoker.getHost(), invoker.getPort());
         Constructor<TTransport> transportConstructor = Utils.getConstructorByParent(transportClass, TSocket.class);
         TTransport transport = transportConstructor.newInstance(tsocket);
         Constructor<TProtocol> protocolConstructor = Utils.getConstructorByParent(protocolClass, TTransport.class);
