@@ -1,17 +1,15 @@
 package com.gary.thriftext.spring;
 
 import com.gary.thriftext.register.ThriftServerRegister;
+import com.gary.thriftext.register.Utils;
 import com.gary.thriftext.spring.annotation.ThriftService;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.transport.TServerTransport;
-import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -82,7 +79,7 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
 
                 if (onRegisterProcessor(entry.getValue(), processor)) {
                     ThriftService service = AnnotationUtils.findAnnotation(serviceClass, ThriftService.class);
-                    String serviceName = StringUtils.isEmpty(service.name()) ? thriftInterface.getEnclosingClass().getSimpleName() : service.name();
+                    String serviceName = thriftInterface.getEnclosingClass().getSimpleName();
                     multiplexedProcessor.registerProcessor(serviceName, processor);
                     if (serverRegister != null) serverRegister.register(thriftInterface.getName(), service.version(), ip + ":" + port + ":" + service.weight() + ":" + System.currentTimeMillis() + ":" + warmup);
                     log.info("thrift service [{}-{}] register", serviceName, serviceClass);

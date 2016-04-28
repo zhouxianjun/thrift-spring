@@ -1,11 +1,11 @@
 package com.gary.thriftext.spring;
 
+import com.gary.thriftext.register.LoadBalance;
 import com.gary.thriftext.register.ThriftServerProviderFactory;
+import com.gary.thriftext.register.loadbalance.RandomLoadBalance;
 import com.gary.thriftext.spring.annotation.ThriftReference;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TTransport;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.context.ApplicationContext;
@@ -27,14 +27,7 @@ public class ThriftServiceClientFactory extends InstantiationAwareBeanPostProces
     @Setter
     private ThriftServerProviderFactory providerFactory;
     @Setter
-    private Class<TTransport> transportClass;
-    @Setter
-    private Class<TProtocol> protocolClass;
-
-    @Setter
-    private int maxActive = 32;// 最大活跃连接数
-    @Setter
-    private int idleTime = 180000; // -1,关闭空闲检测
+    private LoadBalance loadBalance = new RandomLoadBalance();
     @Setter
     private ApplicationContext applicationContext;
 
@@ -89,14 +82,11 @@ public class ThriftServiceClientFactory extends InstantiationAwareBeanPostProces
         if (referenceBean != null)
             return referenceBean.getObject();
         referenceBean = new ReferenceBean();
-        referenceBean.setIdleTime(idleTime);
-        referenceBean.setMaxActive(maxActive);
-        referenceBean.setProtocolClass(protocolClass);
-        referenceBean.setTransportClass(transportClass);
         referenceBean.setReference(reference);
         referenceBean.setReferenceClass(referenceClass);
         referenceBean.setProviderFactory(providerFactory);
         referenceBean.setApplicationContext(applicationContext);
+        referenceBean.setLoadBalance(loadBalance);
         referenceBean.afterPropertiesSet();
         referenceBeans.putIfAbsent(key, referenceBean);
         referenceBean = referenceBeans.get(key);

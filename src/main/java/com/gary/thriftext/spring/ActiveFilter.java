@@ -3,7 +3,6 @@ package com.gary.thriftext.spring;
 import com.gary.thriftext.register.InvokerFilter;
 import com.gary.thriftext.register.dto.RpcStatus;
 import com.gary.thriftext.spring.annotation.ThriftFilter;
-import org.apache.thrift.TServiceClient;
 
 import java.lang.reflect.Method;
 
@@ -16,7 +15,7 @@ import java.lang.reflect.Method;
 @ThriftFilter
 public class ActiveFilter implements InvokerFilter {
     @Override
-    public boolean before(TServiceClient client, Object proxy, Method method, Object[] args) {
+    public boolean before(Object proxy, Method method, Object[] args) {
         RpcStatus.beginCount(proxy.getClass().getName());
         return true;
     }

@@ -15,8 +15,6 @@ import java.lang.annotation.*;
 @Documented
 @Component
 public @interface ThriftService {
-    String name() default "";
-
     String version() default "1.0.0";
 
     int weight() default 1;

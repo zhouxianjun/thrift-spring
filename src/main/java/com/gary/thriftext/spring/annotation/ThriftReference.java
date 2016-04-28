@@ -15,7 +15,5 @@ import java.lang.annotation.*;
 @Documented
 @Component
 public @interface ThriftReference {
-    String name() default "";
-
     String version() default "1.0.0";
 }
