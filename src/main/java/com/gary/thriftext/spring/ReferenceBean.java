@@ -64,7 +64,7 @@ public class ReferenceBean implements FactoryBean, InitializingBean {
         object = Proxy.newProxyInstance(classLoader, new Class[] { objectType }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                Invoker invoker = loadBalance.selector(providerFactory.allServerAddressList(name, reference.version()), method);
+                Invoker invoker = loadBalance.selector(providerFactory.allServerAddressList(referenceClass.getEnclosingClass().getSimpleName(), reference.version(), referenceClass), method);
                 long start = System.currentTimeMillis();
                 try {
                     List<InvokerFilter> filters = getFilters();

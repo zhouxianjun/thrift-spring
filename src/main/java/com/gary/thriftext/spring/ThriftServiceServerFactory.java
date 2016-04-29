@@ -81,7 +81,7 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
                     ThriftService service = AnnotationUtils.findAnnotation(serviceClass, ThriftService.class);
                     String serviceName = thriftInterface.getEnclosingClass().getSimpleName();
                     multiplexedProcessor.registerProcessor(serviceName, processor);
-                    if (serverRegister != null) serverRegister.register(thriftInterface.getName(), service.version(), ip + ":" + port + ":" + service.weight() + ":" + System.currentTimeMillis() + ":" + warmup);
+                    if (serverRegister != null) serverRegister.register(serviceName, service.version(), ip + ":" + port + ":" + service.weight() + ":" + System.currentTimeMillis() + ":" + warmup);
                     log.info("thrift service [{}-{}] register", serviceName, serviceClass);
                 }
             }

@@ -12,22 +12,22 @@ import java.util.concurrent.locks.LockSupport;
  * @date 16-4-23 下午5:24
  */public class ClientSpring {
     public static void main(String[] args) {
-        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
         context.start();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
+        final ClientTest clientTest = context.getBean(ClientTest.class);
+        for (int i = 0; i < 1000; i++) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
                     try {
-                        Thread.sleep(5000);
-                        context.getBean(ClientTest.class).say();
+                        clientTest.say();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            }
-        });
-        thread.start();
+            });
+            thread.start();
+        }
         LockSupport.park();
     }
 }
