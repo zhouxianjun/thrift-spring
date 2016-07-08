@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <bean id="zookeeper" class="com.gary.thriftext.register.zookeeper.ZookeeperFactory">
+        <property name="hosts" value="127.0.0.1:2181" />
+        <property name="namespace" value="demo" />
+        <property name="connectionTimeout" value="3000" />
+        <property name="sessionTimeout" value="3000" />
+        <property name="singleton" value="true" />
+    </bean>
+
+    <bean class="com.gary.thriftext.spring.ThriftServiceClientFactory">
+        <property name="providerFactory">
+            <bean class="com.gary.thriftext.register.zookeeper.ZookeeperThriftProviderFactoryFactory">
+                <property name="zkClient" ref="zookeeper"/>
+                <property name="invokerFactory">
+                    <bean class="com.gary.thriftext.register.invoker.PoolInvokerFactory">
+                        <property name="transportClass" value="org.apache.thrift.transport.TFramedTransport"/>
+                        <property name="protocolClass" value="org.apache.thrift.protocol.TCompactProtocol"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <context:component-scan base-package="com.gary"/>
+    <context:annotation-config/>
+</beans>

@@ -15,7 +15,7 @@ import java.util.concurrent.locks.LockSupport;
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
         context.start();
         final ClientTest clientTest = context.getBean(ClientTest.class);
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1; i++) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
