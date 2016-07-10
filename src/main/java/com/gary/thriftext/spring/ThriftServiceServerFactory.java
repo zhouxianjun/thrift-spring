@@ -9,6 +9,7 @@ import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.server.TServer;
+import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportFactory;
 import org.springframework.beans.BeansException;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.Constructor;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author zhouxianjun(Gary)
@@ -43,6 +45,8 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
     private TProtocolFactory protocolFactory;
     @Setter
     private ThriftServerRegister serverRegister;
+    @Setter
+    private ExecutorService executorService;
     @Setter
     private String ip;
     @Setter
@@ -156,6 +160,9 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
 
             Class<?> argsClass = ClassUtils.forName(serverClass.getName() + ".Args", classLoader);
             TServer.AbstractServerArgs args = (TServer.AbstractServerArgs) Utils.getConstructorByParent(argsClass, TServerTransport.class).newInstance(transport);
+            if (executorService != null && argsClass.isAssignableFrom(TThreadedSelectorServer.Args.class)) {
+                ((TThreadedSelectorServer.Args)args).executorService(executorService);
+            }
             args.processor(multiplexedProcessor);
             if (transportFactory != null)
                 args.transportFactory(transportFactory);
