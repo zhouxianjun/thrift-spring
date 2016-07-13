@@ -11,6 +11,7 @@ import java.lang.annotation.*;
  * @Description:
  * @date 2016/4/22 9:58
  */
+@Inherited
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

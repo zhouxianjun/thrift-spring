@@ -12,6 +12,7 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -69,7 +70,7 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
         if (services != null) {
             TMultiplexedProcessor multiplexedProcessor = new TMultiplexedProcessor();
             for (Map.Entry<String, Object> entry : services.entrySet()) {
-                Class serviceClass = entry.getValue().getClass();
+                Class serviceClass = AopUtils.isAopProxy(entry.getValue()) ? AopUtils.getTargetClass(entry.getValue()) : entry.getValue().getClass();
                 Class[] interfaces = serviceClass.getInterfaces();
                 if (interfaces.length == 0)
                     throw new IllegalClassFormatException("service-class should implements Iface");
