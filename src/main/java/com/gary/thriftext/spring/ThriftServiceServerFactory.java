@@ -53,6 +53,8 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
     @Setter
     private int port = 9090;
     @Setter
+    private long maxReadBufferBytes = 1024 * 1024L;
+    @Setter
     private long warmup = 10 * 60 * 10000;
     private final String INTERFACE_NAME = "Iface";
     private final String PROCESSOR = "$Processor";
@@ -163,6 +165,7 @@ public class ThriftServiceServerFactory implements ApplicationContextAware, Init
             TServer.AbstractServerArgs args = (TServer.AbstractServerArgs) Utils.getConstructorByParent(argsClass, TServerTransport.class).newInstance(transport);
             if (executorService != null && argsClass.isAssignableFrom(TThreadedSelectorServer.Args.class)) {
                 ((TThreadedSelectorServer.Args)args).executorService(executorService);
+                ((TThreadedSelectorServer.Args)args).maxReadBufferBytes = maxReadBufferBytes;
             }
             args.processor(multiplexedProcessor);
             if (transportFactory != null)
